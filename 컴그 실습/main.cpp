@@ -14,8 +14,15 @@ void main(int argc, char** argv)
 	glutCreateWindow("29");
 	glewExperimental = GL_TRUE;
 
-	if (glewInit() != GLEW_OK)	{		std::cerr << "Unable to initialize GLEW" << std::endl;
-		exit(EXIT_FAILURE);	}	else	{		std::cout << "GLEW Initialized\n";	}
+	if (glewInit() != GLEW_OK)
+	{
+		std::cerr << "Unable to initialize GLEW" << std::endl;
+		exit(EXIT_FAILURE);
+	}
+	else
+	{
+		std::cout << "GLEW Initialized\n";
+	}
 	glEnable(GL_DEPTH_TEST);
 
 	x_arrow.Readobj(arrow);
@@ -43,7 +50,8 @@ void main(int argc, char** argv)
 	glutDisplayFunc(drawScene);
 	glutKeyboardFunc(Keyborad);
 	glutKeyboardUpFunc(Keyborad_up);
-	glutMouseFunc(Mouse);	glutMotionFunc(Motion);
+	glutMouseFunc(Mouse);
+	glutMotionFunc(Motion);
 	glutMouseWheelFunc(mouseWheel);
 	glutReshapeFunc(Reshape);
 	glutMainLoop();
@@ -64,7 +72,8 @@ int make_vertexShaders()
 		std::cerr << "ERROR: vertex shader ÄÄÆÄÀÏ ½ÇÆÐ\n" << errorLog << std::endl;
 		return false;
 	}
-}
+}
+
 int make_fragmentShaders()
 {
 	fragmentsource = filetobuf("fgA.glsl");
@@ -379,7 +388,7 @@ void InitTexture()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexImage2D(GL_TEXTURE_2D, 0, 3, widthImage1, heightImage1, 0, GL_RGBA, GL_UNSIGNED_BYTE, sky6);
 
-	unsigned char* CubeUI = stbi_load("cube.png", &widthImage2, &heightImage2, &numberOfChannel2, 0);
+	unsigned char* CubeUI = stbi_load("Cubeimage.png", &widthImage2, &heightImage2, &numberOfChannel2, 0);
 	glBindTexture(GL_TEXTURE_2D, texture[12]);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -412,15 +421,69 @@ void InitShader()
 	glDeleteShader(fragmentShader);
 	glUseProgram(s_program);
 }
-void Convert_xy(int x, int y){	float w = width;	float h = height;	ox = (float)(x - (float)w / 2.0) * (float)(1.0 / (float)(w / 2.0));	oy = -(float)(y - (float)h / 2.0) * (float)(1.0 / (float)(h / 2.0));}void Timer(int value){	key_check();	glutTimerFunc(10, Timer, value);	glutPostRedisplay();}GLvoid Keyborad(unsigned char key, int x, int y){	if (GLUT_KEY_DOWN)	{		keybuffer[key] = true;	}	if (Select) {		switch (key) {		case 'w':		case 'W':			break;		case 'e':		case 'E':			break;		case 'r':		case 'R':			break;		case 'Q':		case 'q':			break;		case '1':			camera_move += 0.01;			break;		case '2':			if (camera_move > 0) camera_move -= 0.01;			break;		}	}	glutPostRedisplay();}
 
-GLvoid Mouse(int button, int state, int x, int y){	if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN)	{		ox = x;		oy = y;		left_button = true;		cout<<"xÁÂÇ¥ : " << x << " "<< "yÁÂÇ¥ : " << y << endl;		for (int i = 0; i < UI.size(); ++i) {
+void Convert_xy(int x, int y)
+{
+	float w = width;
+	float h = height;
+	ox = (float)(x - (float)w / 2.0) * (float)(1.0 / (float)(w / 2.0));
+	oy = -(float)(y - (float)h / 2.0) * (float)(1.0 / (float)(h / 2.0));
+}
+
+void Timer(int value)
+{
+	key_check();
+	glutTimerFunc(10, Timer, value);
+	glutPostRedisplay();
+}
+
+GLvoid Keyborad(unsigned char key, int x, int y)
+{
+	if (GLUT_KEY_DOWN)
+	{
+		keybuffer[key] = true;
+	}
+	if (Select) {
+		switch (key) {
+		case 'w':
+		case 'W':
+			break;
+		case 'e':
+		case 'E':
+			break;
+		case 'r':
+		case 'R':
+			break;
+		case 'Q':
+		case 'q':
+			break;
+		case '1':
+			camera_move += 0.01;
+			break;
+		case '2':
+			if (camera_move > 0) camera_move -= 0.01;
+			break;
+		}
+	}
+	glutPostRedisplay();
+}
+
+GLvoid Mouse(int button, int state, int x, int y)
+{
+	if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
+	{
+		ox = x;
+		oy = y;
+		left_button = true;
+		cout<<"xÁÂÇ¥ : " << x << " "<< "yÁÂÇ¥ : " << y << endl;
+		for (int i = 0; i < UI.size(); ++i) {
 			if (UI[i].collisionbox.left < x && UI[i].collisionbox.top < y && UI[i].collisionbox.right > x && UI[i].collisionbox.bottom > y) {
 				cout << i << endl;
 				switch (i) {
 				case 0:
 					if (objects.size()) {
-						if (dynamic_cast<Sphere*>(objects.back())) dynamic_cast<Sphere*>(objects.back())->initcolor = glm::vec4(1.0, 1.0, 1.0, 1.0);						if (dynamic_cast<Cube*>(objects.back())) dynamic_cast<Cube*>(objects.back())->initcolor = glm::vec4(1.0, 1.0, 1.0, 1.0);
+						if (dynamic_cast<Sphere*>(objects.back())) dynamic_cast<Sphere*>(objects.back())->initcolor = glm::vec4(1.0, 1.0, 1.0, 1.0);
+						if (dynamic_cast<Cube*>(objects.back())) dynamic_cast<Cube*>(objects.back())->initcolor = glm::vec4(1.0, 1.0, 1.0, 1.0);
 						objects.back()->Update();
 					}
 					objects.push_back(new Cube(glm::vec4(1.0, 1.0, 1.0, 0.3)));
@@ -430,7 +493,8 @@ GLvoid Mouse(int button, int state, int x, int y){	if (button == GLUT_LEFT_BUT
 					break;
 				case 1:
 					if (objects.size()) {
-						if (dynamic_cast<Sphere*>(objects.back())) dynamic_cast<Sphere*>(objects.back())->initcolor = glm::vec4(1.0, 1.0, 1.0, 1.0);						if (dynamic_cast<Cube*>(objects.back())) dynamic_cast<Cube*>(objects.back())->initcolor = glm::vec4(1.0, 1.0, 1.0, 1.0);
+						if (dynamic_cast<Sphere*>(objects.back())) dynamic_cast<Sphere*>(objects.back())->initcolor = glm::vec4(1.0, 1.0, 1.0, 1.0);
+						if (dynamic_cast<Cube*>(objects.back())) dynamic_cast<Cube*>(objects.back())->initcolor = glm::vec4(1.0, 1.0, 1.0, 1.0);
 						objects.back()->Update();
 					}
 					objects.push_back(new Sphere(glm::vec4(1.0, 1.0, 1.0, 0.3)));
@@ -441,10 +505,97 @@ GLvoid Mouse(int button, int state, int x, int y){	if (button == GLUT_LEFT_BUT
 				}
 				break;
 			}
-		}	}	else	{		ox = x;		oy = y;		pre_x_angle = x_angle;		pre_y_angle = y_angle;		left_button = false;	}	glutPostRedisplay();}GLvoid Motion(int x, int y){	if (left_button)	{		y_angle = x - ox;		x_angle = y - oy;		x_angle += pre_x_angle;		y_angle += pre_y_angle;		y_angle /= 4;		x_angle /= 4;	}	glutPostRedisplay();}GLvoid mouseWheel(int button, int dir, int x, int y){
-	if (dir > 0)	{		wheel_scale += dir * 0.1;	}	else if (dir < 0)	{		wheel_scale += dir * 0.1;		if (wheel_scale < 0.1)		{			wheel_scale = 0.1;		}	}	glutPostRedisplay();}void key_check(){	glm::mat4 rotationMatrix = glm::rotate(glm::mat4(1.0f), (float)glm::radians(x_angle), glm::vec3(1.0f, 0.0f, 0.0f));
-	rotationMatrix = glm::rotate(rotationMatrix, (float)glm::radians(y_angle), glm::vec3(0.0f, 1.0f, 0.0f));	glm::vec3 right = glm::vec3(rotationMatrix[0][0], rotationMatrix[1][0], rotationMatrix[2][0]);
+		}
+	}
+	else
+	{
+		ox = 0;
+		oy = 0;
+		pre_x_angle = x_angle;
+		pre_y_angle = y_angle;
+		left_button = false;
+	}
+	glutPostRedisplay();
+}
+
+GLvoid Motion(int x, int y)
+{
+	if (left_button)
+	{
+		y_angle = (x - ox)/4;
+		x_angle = (y - oy)/4;
+		x_angle += pre_x_angle;
+		y_angle += pre_y_angle;
+
+		//y_angle /= 4;
+		//x_angle /= 4;
+	}
+	glutPostRedisplay();
+}
+
+GLvoid mouseWheel(int button, int dir, int x, int y)
+{
+	if (dir > 0)
+	{
+		wheel_scale += dir * 0.1;
+	}
+	else if (dir < 0)
+	{
+		wheel_scale += dir * 0.1;
+		if (wheel_scale < 0.1)
+		{
+			wheel_scale = 0.1;
+		}
+	}
+	glutPostRedisplay();
+}
+
+void key_check()
+{
+	glm::mat4 rotationMatrix = glm::rotate(glm::mat4(1.0f), (float)glm::radians(x_angle), glm::vec3(1.0f, 0.0f, 0.0f));
+	rotationMatrix = glm::rotate(rotationMatrix, (float)glm::radians(y_angle), glm::vec3(0.0f, 1.0f, 0.0f));
+	glm::vec3 right = glm::vec3(rotationMatrix[0][0], rotationMatrix[1][0], rotationMatrix[2][0]);
 	glm::vec3 look = glm::vec3(rotationMatrix[0][2], rotationMatrix[1][2], rotationMatrix[2][2]);
 	glm::vec3 up = glm::vec3(rotationMatrix[0][1], rotationMatrix[1][1], rotationMatrix[2][1]);
-	if (Select) {		if (keybuffer['w'] == true || keybuffer['W'] == true)		{			cameraPosition += (look*camera_move);		}		if (keybuffer['a'] == true || keybuffer['A'] == true)		{
-			cameraPosition += (right * camera_move);		}		if (keybuffer['s'] == true || keybuffer['S'] == true)		{			cameraPosition -= (look*camera_move);		}		if (keybuffer['d'] == true || keybuffer['D'] == true)		{			cameraPosition -= (right*camera_move);		}		if (keybuffer['q'] == true || keybuffer['Q'] == true)		{			cameraPosition -= (up * camera_move);		}		if (keybuffer['e'] == true || keybuffer['E'] == true)		{			cameraPosition += (up * camera_move);		}	}}GLvoid Keyborad_up(unsigned char key, int x, int y){	if (GLUT_KEY_UP)	{		keybuffer[key] = false;	}	glutPostRedisplay();}
+
+	if (Select) {
+		if (keybuffer['w'] == true || keybuffer['W'] == true)
+		{
+			cameraPosition += (look*camera_move);
+		}
+
+		if (keybuffer['a'] == true || keybuffer['A'] == true)
+		{
+			cameraPosition += (right * camera_move);
+		}
+
+		if (keybuffer['s'] == true || keybuffer['S'] == true)
+		{
+			cameraPosition -= (look*camera_move);
+		}
+
+		if (keybuffer['d'] == true || keybuffer['D'] == true)
+		{
+			cameraPosition -= (right*camera_move);
+		}
+
+		if (keybuffer['q'] == true || keybuffer['Q'] == true)
+		{
+			cameraPosition -= (up * camera_move);
+		}
+
+		if (keybuffer['e'] == true || keybuffer['E'] == true)
+		{
+			cameraPosition += (up * camera_move);
+		}
+	}
+}
+
+GLvoid Keyborad_up(unsigned char key, int x, int y)
+{
+	if (GLUT_KEY_UP)
+	{
+		keybuffer[key] = false;
+	}
+	glutPostRedisplay();
+}
