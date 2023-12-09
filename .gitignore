@@ -1,0 +1,13 @@
+/.vs
+/컴그 실습/x64
+*.exe
+*.lik
+*.pdb
+*.obj
+*.log
+*.pch
+*.idb
+*.tlog
+*.lastbuildstate
+*.suo
+*.db
