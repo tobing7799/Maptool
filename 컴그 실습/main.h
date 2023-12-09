@@ -39,8 +39,8 @@ glm::mat4 projection2;
 unsigned int texture[14];
 
 float ox = 0, oy = 0;
-float x_angle = -90;
-float y_angle = 30;
+float x_angle = 30;
+float y_angle = 180;
 float z_angle = 0;
 float pre_x_angle = 0;
 float pre_y_angle = 0;
@@ -51,7 +51,7 @@ float near_1 = 0.1;
 float far_1 = 200.0;
 float persfect_z = -2.0;
 
-glm::vec3 cameraPosition = glm::vec3(0.0f, -2.0f, 3.0f);
+glm::vec3 cameraPosition = glm::vec3(0.0f, -2.0f, 6.0f);
 glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, 0.0f);
 glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 float cameraSpeed = 0.1;

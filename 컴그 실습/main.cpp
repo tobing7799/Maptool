@@ -527,8 +527,6 @@ GLvoid Motion(int x, int y)
 		x_angle += pre_x_angle;
 		y_angle += pre_y_angle;
 
-		//y_angle /= 4;
-		//x_angle /= 4;
 	}
 	glutPostRedisplay();
 }
