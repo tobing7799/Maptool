@@ -42,13 +42,13 @@ float ox = 0, oy = 0;
 float x_angle = 30;
 float y_angle = 180;
 float z_angle = 0;
-float pre_x_angle = 0;
-float pre_y_angle = 0;
+float pre_x_angle = 30;
+float pre_y_angle = 180;
 float wheel_scale = 0;
 bool left_button = 0;
 float fovy = 45;
 float near_1 = 0.1;
-float far_1 = 200.0;
+float far_1 = 100.0;
 float persfect_z = -2.0;
 
 glm::vec3 cameraPosition = glm::vec3(0.0f, -2.0f, 6.0f);
@@ -66,7 +66,7 @@ Arrow z_arrow{ glm::vec4(0.0,0.0,1.0,0.7) };
 
 vector<Flat>UI;
 vector<Object*> objects;
-vector<Line> lines(202);
+Line line;
 
 float Light_R = 0.5f;
 float Light_G = 0.5f;
@@ -84,7 +84,7 @@ bool light_move = false;
 bool light_on = true;
 int stage = 0;
 
-bool Select = false;
+bool Select = true;
 
 float ball_r = 1.0;
 

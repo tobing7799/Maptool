@@ -144,6 +144,9 @@ GLvoid drawScene()
 	int UIstate = glGetUniformLocation(s_program, "UIstate");
 	glUniform1i(UIstate, 0);
 
+	int instancingstate = glGetUniformLocation(s_program, "instancestate");
+	glUniform1i(instancingstate, 0);
+
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -180,11 +183,26 @@ GLvoid drawScene()
 		x_arrow.Draw(s_program);
 		y_arrow.Draw(s_program);
 		z_arrow.Draw(s_program);
-		for (Line& line : lines) {
-			line.Draw(s_program);
-		}
+
+		instancingstate = glGetUniformLocation(s_program, "instancestate");
+		glUniform1i(instancingstate, 1);
+
+		int instancingoffset = glGetUniformLocation(s_program, "offset");
+		glUniform3fv(instancingoffset, line.linenumber, glm::value_ptr(line.positiondata_x[0]));
+		line.objectmatrix.rotation.x = 90;
+		line.Draw(s_program);
+
+
+		line.objectmatrix.rotation.x = 0;
+		line.objectmatrix.rotation.y = 90;
+		instancingoffset = glGetUniformLocation(s_program, "offset");
+		glUniform3fv(instancingoffset, line.linenumber, glm::value_ptr(line.positiondata_z[0]));
+		line.Draw(s_program);
+		line.objectmatrix.rotation.y = 0;
 	}
 
+	instancingstate = glGetUniformLocation(s_program, "instancestate");
+	glUniform1i(instancingstate, 0);
 	glDisable(GL_BLEND);
 
 	glViewport(0, height-100, 200, 100);
@@ -267,20 +285,13 @@ void InitBuffer()
 	z_arrow.Initialize();
 	z_arrow.modelmatrix.rotation.y = 180;
 
-	for (Line& line : lines) {
-		line.Initialize();
-		line.objectmatrix.rotation.z = 90;
-		line.modelmatrix.scale = glm::vec3(1.0, (float(lines.size() / 4) * 0.1), 1.0);
+	line.Initialize();
+	line.objectmatrix.rotation.z = 90;
+	for (int i = 0; i < line.linenumber; ++i) {
+		line.positiondata_x.push_back(glm::vec3((float(line.linenumber / 2) * -line.lineOffsetSize) + (i * line.lineOffsetSize), 0.0, 0.0));
+		line.positiondata_z.push_back(glm::vec3(0.0, 0.0, (float(line.linenumber / 2) * -line.lineOffsetSize) + (i * line.lineOffsetSize)));
 	}
-
-	for (int i = 0; i < lines.size() / 2; ++i) {
-		lines[i].objectmatrix.position = glm::vec3((float(lines.size() / 4) * -0.1) + (i * 0.1), 0.0, 0.0);
-		lines[i].objectmatrix.rotation.y = 90;
-	}
-
-	for (int i = 0; i < lines.size() / 2; ++i) {
-		lines[i + lines.size() / 2].objectmatrix.position = glm::vec3(0.0, 0.0, (float(lines.size() / 4) * -0.1) + (i * 0.1));
-	}
+	line.modelmatrix.scale = glm::vec3(1.0, (float(line.linenumber / 2) * line.lineOffsetSize), 1.0);
 }
 
 void InitTexture()

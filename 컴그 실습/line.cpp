@@ -36,5 +36,6 @@ void Line::Draw(int programID)
 	unsigned int modelLocation = glGetUniformLocation(programID, "modelTransform");
 	glUniformMatrix4fv(modelLocation, 1, GL_FALSE, glm::value_ptr(GetTransform() * GetmodelTransform()));
 	glBindVertexArray(vao);
-	glDrawArrays(GL_LINES, 0, 2);
+	//glDrawArrays(GL_LINES, 0, 2);
+	glDrawArraysInstanced(GL_LINES, 0, 2, 1002);
 }

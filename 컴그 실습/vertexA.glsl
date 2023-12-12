@@ -13,11 +13,21 @@ uniform mat4 modelTransform;
 uniform mat4 cameraTransform;
 uniform mat4 projectionTransform;
 
+uniform int instancestate;
+uniform vec3 offset[1001];
+
 void main()
 {
-gl_Position = projectionTransform *cameraTransform *modelTransform* vec4(vPos, 1.0);
-FragPos = vec3(modelTransform*vec4(vPos,1.0));
-Normal = vec3(modelTransform*vec4(vNormal,0.0));
-out_Color = in_Color;
-TexCoord = vTexCoord;
+	if(instancestate == 1)
+	{
+		gl_Position = projectionTransform *cameraTransform *modelTransform* vec4(vPos+offset[gl_InstanceID], 1.0);
+	}
+	else if(instancestate == 0)
+	{
+		gl_Position = projectionTransform *cameraTransform *modelTransform* vec4(vPos, 1.0);	
+	}
+	FragPos = vec3(modelTransform*vec4(vPos,1.0));
+	Normal = vec3(modelTransform*vec4(vNormal,0.0));
+	out_Color = in_Color;
+	TexCoord = vTexCoord;
 }
