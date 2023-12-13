@@ -87,7 +87,7 @@ bool light_move = false;
 bool light_on = true;
 int stage = 0;
 
-bool Select = true;
+bool Select = false;
 int selectObject = -1;
 
 bool Grid = true;

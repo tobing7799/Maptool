@@ -513,6 +513,18 @@ GLvoid Keyborad(unsigned char key, int x, int y)
 	case 'G':
 		Grid = !Grid;
 		break;
+	case 'r':
+	case 'R':
+		if (objects.size()) {
+			objects.pop_back();
+			selectObject = objects.size()-1;
+			if (dynamic_cast<Sphere*>(objects.back())) dynamic_cast<Sphere*>(objects.back())->initcolor = glm::vec4(1.0, 1.0, 1.0, 0.3);
+			if (dynamic_cast<Cube*>(objects.back())) dynamic_cast<Cube*>(objects.back())->initcolor = glm::vec4(1.0, 1.0, 1.0, 0.3);
+			objects.back()->Update();
+			arrow.objectmatrix.position = objects.back()->objectmatrix.position;
+			Select = true;
+		}
+		break;
 	case '1':
 		camera_move += 0.01;
 		break;
