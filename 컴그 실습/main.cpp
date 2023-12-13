@@ -144,6 +144,9 @@ GLvoid drawScene()
 	int UIstate = glGetUniformLocation(s_program, "UIstate");
 	glUniform1i(UIstate, 0);
 
+	int instancingstate = glGetUniformLocation(s_program, "instancestate");
+	glUniform1i(instancingstate, 0);
+
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
