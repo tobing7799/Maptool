@@ -25,9 +25,9 @@ void main(int argc, char** argv)
 	}
 	glEnable(GL_DEPTH_TEST);
 
-	x_arrow.Readobj(arrow);
-	y_arrow.Readobj(arrow);
-	z_arrow.Readobj(arrow);
+	x_arrow.Readobj(ar);
+	y_arrow.Readobj(ar);
+	z_arrow.Readobj(ar);
 
 	UI.emplace_back(Flat());
 	UI.emplace_back(Flat());
@@ -144,27 +144,24 @@ GLvoid drawScene()
 	int UIstate = glGetUniformLocation(s_program, "UIstate");
 	glUniform1i(UIstate, 0);
 
-	int instancingstate = glGetUniformLocation(s_program, "instancestate");
-	glUniform1i(instancingstate, 0);
-
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	for (Object*& obj : objects) {
-		obj->Draw(s_program);
-		if (Select) {
+	for (int i = 0; i < objects.size(); ++i) {
+		objects[i]->Draw(s_program);
+		if (i == selectObject) {
 			glFrontFace(GL_CW);
 			glEnable(GL_CULL_FACE);
 			Object* temp;
 			if (dynamic_cast<Sphere*>(objects.back())) {
 				temp = new Sphere;
-				*temp = *obj;
+				*temp = *objects[i];
 				temp->Readobj(sp);
 				temp->Initialize();
 			}
 			else if (dynamic_cast<Cube*>(objects.back())) {
 				temp = new Cube;
-				*temp = *obj;
+				*temp = *objects[i];
 				temp->Readobj(cu);
 				temp->Initialize();
 			}
@@ -183,7 +180,9 @@ GLvoid drawScene()
 		x_arrow.Draw(s_program);
 		y_arrow.Draw(s_program);
 		z_arrow.Draw(s_program);
+	}
 
+	if (Grid) {
 		instancingstate = glGetUniformLocation(s_program, "instancestate");
 		glUniform1i(instancingstate, 1);
 
@@ -292,6 +291,10 @@ void InitBuffer()
 		line.positiondata_z.push_back(glm::vec3(0.0, 0.0, (float(line.linenumber / 2) * -line.lineOffsetSize) + (i * line.lineOffsetSize)));
 	}
 	line.modelmatrix.scale = glm::vec3(1.0, (float(line.linenumber / 2) * line.lineOffsetSize), 1.0);
+
+	x_arrow.parent = &arrow;
+	y_arrow.parent = &arrow;
+	z_arrow.parent = &arrow;
 }
 
 void InitTexture()
@@ -450,31 +453,69 @@ void Timer(int value)
 
 GLvoid Keyborad(unsigned char key, int x, int y)
 {
-	if (GLUT_KEY_DOWN)
-	{
-		keybuffer[key] = true;
-	}
-	if (Select) {
-		switch (key) {
-		case 'w':
-		case 'W':
-			break;
-		case 'e':
-		case 'E':
-			break;
-		case 'r':
-		case 'R':
-			break;
-		case 'Q':
-		case 'q':
-			break;
-		case '1':
-			camera_move += 0.01;
-			break;
-		case '2':
-			if (camera_move > 0) camera_move -= 0.01;
-			break;
+	keybuffer[key] = true;
+	switch (key) {
+	case '8':
+		if (!objects.empty() && selectObject > -1) {
+			objects[selectObject]->objectmatrix.position.z += 0.5;
+			arrow.objectmatrix.position.z += 0.5;
 		}
+		break;
+	case '5':
+		if (!objects.empty() && selectObject > -1) {
+			objects[selectObject]->objectmatrix.position.z -= 0.5;
+			arrow.objectmatrix.position.z -= 0.5;
+		}
+		break;
+	case '6':
+		if (!objects.empty() && selectObject > -1) {
+			objects[selectObject]->objectmatrix.position.x -= 0.5;
+			arrow.objectmatrix.position.x -= 0.5;
+		}
+		break;
+	case '4':
+		if (!objects.empty() && selectObject > -1) {
+			objects[selectObject]->objectmatrix.position.x += 0.5;
+			arrow.objectmatrix.position.x += 0.5;
+		}
+		break;
+	case '7':
+		if (!objects.empty() && selectObject > -1) {
+			objects[selectObject]->objectmatrix.position.y += 0.5;
+			arrow.objectmatrix.position.y += 0.5;
+		}
+		break;
+	case '9':
+		if (!objects.empty() && selectObject > -1) {
+			objects[selectObject]->objectmatrix.position.y -= 0.5;
+			arrow.objectmatrix.position.y -= 0.5;
+		}
+		break;
+	case 'f':
+	case 'F':
+		if (objects.size()) {
+			if (dynamic_cast<Sphere*>(objects.back())) dynamic_cast<Sphere*>(objects.back())->initcolor = glm::vec4(1.0, 1.0, 1.0, 1.0);
+			if (dynamic_cast<Cube*>(objects.back())) dynamic_cast<Cube*>(objects.back())->initcolor = glm::vec4(1.0, 1.0, 1.0, 1.0);
+			objects.back()->Update();
+		}
+		Select = false;
+		selectObject = -1;
+		break;
+	case'p':
+	case 'P':
+		ExportObjFile();
+		cout << "Export Complete" <<'\n';
+		break;
+	case 'g':
+	case 'G':
+		Grid = !Grid;
+		break;
+	case '1':
+		camera_move += 0.01;
+		break;
+	case '2':
+		if (camera_move > 0) camera_move -= 0.01;
+		break;
 	}
 	glutPostRedisplay();
 }
@@ -501,6 +542,8 @@ GLvoid Mouse(int button, int state, int x, int y)
 					objects.back()->Readobj(cu);
 					objects.back()->Initialize();
 					Select = true;
+					selectObject = objects.size() - 1;
+					arrow.objectmatrix.position = glm::vec3(0,0,0);
 					break;
 				case 1:
 					if (objects.size()) {
@@ -512,6 +555,8 @@ GLvoid Mouse(int button, int state, int x, int y)
 					objects.back()->Readobj(sp);
 					objects.back()->Initialize();
 					Select = true;
+					selectObject = objects.size() - 1;
+					arrow.objectmatrix.position = glm::vec3(0, 0, 0);
 					break;
 				}
 				break;
@@ -567,44 +612,73 @@ void key_check()
 	glm::vec3 look = glm::vec3(rotationMatrix[0][2], rotationMatrix[1][2], rotationMatrix[2][2]);
 	glm::vec3 up = glm::vec3(rotationMatrix[0][1], rotationMatrix[1][1], rotationMatrix[2][1]);
 
-	if (Select) {
-		if (keybuffer['w'] == true || keybuffer['W'] == true)
-		{
-			cameraPosition += (look*camera_move);
-		}
+	if (keybuffer['w'] == true || keybuffer['W'] == true)
+	{
+		if (keybuffer['v'] || keybuffer['V']) cameraPosition += (look * (camera_move * 3));
+		else cameraPosition += (look * camera_move);
+	}
 
-		if (keybuffer['a'] == true || keybuffer['A'] == true)
-		{
-			cameraPosition += (right * camera_move);
-		}
+	if (keybuffer['a'] == true || keybuffer['A'] == true)
+	{
+		if (keybuffer['v'] || keybuffer['V']) cameraPosition += (right * (camera_move * 3));
+		else cameraPosition += (right * camera_move);
+	}
 
-		if (keybuffer['s'] == true || keybuffer['S'] == true)
-		{
-			cameraPosition -= (look*camera_move);
-		}
+	if (keybuffer['s'] == true || keybuffer['S'] == true)
+	{
+		if (keybuffer['v'] || keybuffer['V']) cameraPosition -= (look * (camera_move * 3));
+		else cameraPosition -= (look * camera_move);
+	}
 
-		if (keybuffer['d'] == true || keybuffer['D'] == true)
-		{
-			cameraPosition -= (right*camera_move);
-		}
+	if (keybuffer['d'] == true || keybuffer['D'] == true)
+	{
+		if (keybuffer['v'] || keybuffer['V']) cameraPosition -= (right * (camera_move * 3));
+		else cameraPosition -=  (right * camera_move);
+	}
 
-		if (keybuffer['q'] == true || keybuffer['Q'] == true)
-		{
-			cameraPosition -= (up * camera_move);
-		}
+	if (keybuffer['q'] == true || keybuffer['Q'] == true)
+	{
+		if (keybuffer['v'] || keybuffer['V']) cameraPosition -= (up * (camera_move * 3));
+		else cameraPosition -= (up * camera_move);
+	}
 
-		if (keybuffer['e'] == true || keybuffer['E'] == true)
-		{
-			cameraPosition += (up * camera_move);
-		}
+	if (keybuffer['e'] == true || keybuffer['E'] == true)
+	{
+		if (keybuffer['v'] || keybuffer['V']) cameraPosition += (up * (camera_move * 3));
+		else cameraPosition += (up * camera_move);
 	}
 }
 
 GLvoid Keyborad_up(unsigned char key, int x, int y)
 {
-	if (GLUT_KEY_UP)
-	{
-		keybuffer[key] = false;
-	}
+	keybuffer[key] = false;
 	glutPostRedisplay();
+}
+
+void ExportObjFile()
+{
+	ofstream out{ "map.txt" };
+
+	int spherecnt = 0;
+	int cubecnt = 0;
+
+	for (Object*& obj : objects) {
+		if (dynamic_cast<Sphere*>(obj)) spherecnt++;
+		else if (dynamic_cast<Cube*>(obj)) cubecnt++;
+	}
+
+	out << "Sphere " << spherecnt <<'\n';
+	for (Object*& obj : objects) {
+		if (dynamic_cast<Sphere*>(obj)) {
+			out << obj->objectmatrix.position.x << ' ' << obj->objectmatrix.position.y << ' ' << obj->objectmatrix.position.z << '\n';
+		}
+	}
+
+	out << "Cube " << cubecnt << '\n';
+	for (Object*& obj : objects) {
+		if (dynamic_cast<Cube*>(obj)) {
+			out << obj->objectmatrix.position.x << ' ' << obj->objectmatrix.position.y << ' ' << obj->objectmatrix.position.z << '\n';
+		}
+	}
+	out.close();
 }

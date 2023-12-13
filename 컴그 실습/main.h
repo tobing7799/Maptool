@@ -25,6 +25,8 @@ GLvoid Reshape(int w, int h);
 GLvoid Keyborad(unsigned char key, int x, int y);
 GLvoid Keyborad_up(unsigned char key, int x, int y);
 void key_check();
+void ExportObjFile();
+
 
 GLuint shaderID;
 GLuint s_program;
@@ -51,7 +53,7 @@ float near_1 = 0.1;
 float far_1 = 100.0;
 float persfect_z = -2.0;
 
-glm::vec3 cameraPosition = glm::vec3(0.0f, -2.0f, 6.0f);
+glm::vec3 cameraPosition = glm::vec3(0.0f, -6.0f, 8.0f);
 glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, 0.0f);
 glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 float cameraSpeed = 0.1;
@@ -60,6 +62,7 @@ float camera_move = 0.03;
 
 bool keybuffer[256] = { 0, };
 
+Arrow arrow;
 Arrow x_arrow{ glm::vec4(1.0,0.0,0.0,0.7) };
 Arrow y_arrow{ glm::vec4(0.0, 1.0, 0.0, 0.7) };
 Arrow z_arrow{ glm::vec4(0.0,0.0,1.0,0.7) };
@@ -85,6 +88,9 @@ bool light_on = true;
 int stage = 0;
 
 bool Select = true;
+int selectObject = -1;
+
+bool Grid = true;
 
 float ball_r = 1.0;
 
@@ -100,4 +106,4 @@ float pitch = 0.0f;
 FILE* sp = fopen("sphere.obj", "rb");
 FILE* cu = fopen("cube.obj", "rb");
 FILE* py = fopen("pyramid.obj", "rb");
-FILE* arrow = fopen("arrow.obj", "rb");
+FILE* ar = fopen("arrow.obj", "rb");
